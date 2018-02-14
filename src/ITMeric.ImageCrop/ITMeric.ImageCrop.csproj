@@ -173,16 +173,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Collections\MediaReferenceList.cs" />
+    <Compile Include="Core\Collections\ImageReferenceList.cs" />
     <Compile Include="Core\CropDetails.cs" />
     <Compile Include="Core\ImageReference.cs" />
     <Compile Include="Core\MediaReference.cs" />
     <Compile Include="Core\ImageReferenceAttribute.cs" />
+    <Compile Include="Core\MediaReferenceType.cs" />
     <Compile Include="Core\PropertyImageReference.cs" />
     <Compile Include="Core\PropertyMediaReferenceBase.cs" />
     <Compile Include="Core\PropertyImageReferenceList.cs" />
     <Compile Include="EditorDescriptors\ImageReferenceBaseEditorDescriptor.cs" />
     <Compile Include="EditorDescriptors\ImageReferenceEditorDescriptor.cs" />
     <Compile Include="EditorDescriptors\ImageReferenceListEditorDescriptor.cs" />
+    <Compile Include="ExtensionMethods\ImageReferenceExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\AbstractJsonConverter.cs" />
     <Compile Include="Serialization\LowercaseContractResolver.cs" />

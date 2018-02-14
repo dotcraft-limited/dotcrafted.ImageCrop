@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace ITMeric.ImageCrop.Core
 {
     public abstract class PropertyMediaReferenceBase<T> : PropertyLongString
-        where T : class, new()
+        where T : class
 
     {
         protected readonly ILogger _logger = LogManager.GetLogger();

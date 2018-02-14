@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using EPiServer.Core;
 using EPiServer.Shell;
 using EPiServer.Shell.ObjectEditing;
 using EPiServer.Shell.ObjectEditing.EditorDescriptors;
@@ -19,8 +21,18 @@ namespace ITMeric.ImageCrop.EditorDescriptors
             if (mediaReferenceAttribute != null)
             {
                 metadata.EditorConfiguration["cropRatio"] = mediaReferenceAttribute.CropRatio;
-                metadata.EditorConfiguration["allowedDndTypes"] =
-                    mediaReferenceAttribute.AllowedTypes?.Select(x => x.FullName.ToLower()).ToArray();
+
+                var allowedTypes = mediaReferenceAttribute.AllowedTypes;
+
+                if (allowedTypes == null || !allowedTypes.Any())
+                {
+                    var imageDataType = typeof(ImageData);
+                    allowedTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
+                        .Where(t => imageDataType.IsAssignableFrom(t)).ToArray();
+                }
+                
+
+                metadata.EditorConfiguration["allowedDndTypes"] = allowedTypes.Select(x => x.FullName.ToLower()).ToArray();
             }
 
             metadata.CustomEditorSettings["uiWrapperType"] = UiWrapperType.Floating;
