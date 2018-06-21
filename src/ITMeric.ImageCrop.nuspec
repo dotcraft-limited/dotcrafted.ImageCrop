@@ -11,7 +11,7 @@
     <description>Image Cropper property editors for EPiServer site</description>
     <copyright>Copyright (c) 2018 ITMeric</copyright>
     <tags>EPiServer CMS ImageCropper Cropper</tags>
-    <iconUrl>http://nuget.episerver.com/Framework/Styles/images/icons/default_package_icon.png</iconUrl>
+    <iconUrl>https://github.com/ITMeric/ITMeric.ImageCrop/blob/master/icon.png</iconUrl>
     <dependencies>
       <dependency id="EPiServer.CMS.Core" version="[11.1.0, 12.0)" /> 
       <dependency id="ImageResizer.Plugins.EPiServerBlobReader" version="[7.0.0, 8.0.0)" />

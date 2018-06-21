@@ -27,8 +27,8 @@
     "epi-cms/widget/_Droppable",
     "epi-cms/widget/_HasChildDialogMixin",
     "epi/shell/widget/dialog/Dialog",
-    "dojo/dnd/Target",
-    "dojo/dnd/Source",
+    "epi/shell/dnd/Target",
+    "epi/shell/dnd/Source",
     //itmeric
     "itmeric/scripts/helpers",
     //template

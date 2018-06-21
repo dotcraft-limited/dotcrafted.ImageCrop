@@ -1,46 +1,48 @@
 ﻿
 (function () {
   define([
-      // dojo
-      "dojo",
-      "dojo/dom-construct",
-      "dojo/mouse",
-      "dojo/on",
-      "dojo/_base/declare",
-      "dojo/_base/lang",
-      "dojo/dom-class",
-      "dojo/dom-style",
-      "dojo/dom-prop",
-      "dojo/dom-attr",
-      "dojo/dom-construct",
-      "dojo/query",
-      "dojo/when",
-      "dojo/dnd/Target",
-      "dojo/dnd/Source",
-      // dijit,
-      "dijit/_CssStateMixin",
-      "dijit/_TemplatedMixin",
-      "dijit/_Widget",
-      "dijit/_WidgetsInTemplateMixin",
-      "dijit/form/Button",
+    // dojo
+    "dojo",
+    "dojo/dom-construct",
+    "dojo/mouse",
+    "dojo/on",
+    "dojo/_base/declare",
+    "dojo/_base/lang",
+    "dojo/dom-class",
+    "dojo/dom-style",
+    "dojo/dom-prop",
+    "dojo/dom-attr",
+    "dojo/dom-construct",
+    "dojo/query",
+    "dojo/when",
+
+    // dijit,
+    "dijit/_CssStateMixin",
+    "dijit/_TemplatedMixin",
+    "dijit/_Widget",
+    "dijit/_WidgetsInTemplateMixin",
+    "dijit/form/Button",
 
 
-      // epi.shell
-      "epi/dependency",
-      "epi/i18n",
-      "epi/shell/widget/_ValueRequiredMixin",
+    // epi.shell
+    "epi/dependency",
+    "epi/i18n",
+    "epi/shell/widget/_ValueRequiredMixin",
 
 
-      // epi.cms
-      "epi-cms/widget/_Droppable",
-      "epi-cms/widget/_HasChildDialogMixin",
-      "epi/shell/widget/dialog/Dialog",
-      "itmeric/scripts/helpers",
+    // epi.cms
+    "epi-cms/widget/_Droppable",
+    "epi-cms/widget/_HasChildDialogMixin",
+    "epi/shell/widget/dialog/Dialog",
+    "epi/shell/dnd/Target",
+    "epi/shell/dnd/Source",
 
-      //template
-      "dojo/text!./templates/template.html",
-    ],
-    function(
+    "itmeric/scripts/helpers",
+
+    //template
+    "dojo/text!./templates/template.html",
+  ],
+    function (
       // dojo
       dojo,
       domConstruct,
@@ -55,8 +57,6 @@
       domConstruct,
       query,
       when,
-      DndTarget,
-      DndSource,
 
       // dijit
       _CssStateMixin,
@@ -74,6 +74,8 @@
       _Droppable,
       _HasChildDialogMixin,
       Dialog,
+      Target,
+      Source,
 
       //itmeric
       helpers,
@@ -98,12 +100,12 @@
           dropTarget: null,
           imageWidth: 120,
 
-          postCreate: function() {
+          postCreate: function () {
 
             this.inherited(arguments);
             this.allowedDndTypes = this.get('allowedDndTypes');
 
-            this.dndSource = new DndSource(this.itemsContainer,
+            this.dndSource = new Source(this.itemsContainer,
               {
                 creator: lang.hitch(this, this._createDndElement),
                 autoSync: true,
@@ -113,7 +115,7 @@
                 accept: ['image']
               });
 
-            this.dropTarget = new DndTarget(this.dropTarget,
+            this.dropTarget = new Target(this.dropTarget,
               {
                 accept: this.allowedDndTypes,
                 createItemOnDrop: false
@@ -128,7 +130,7 @@
           },
 
 
-          postMixInProperties: function() {
+          postMixInProperties: function () {
 
             this.inherited(arguments);
             var registry = dependency.resolve("epi.storeregistry");
@@ -136,36 +138,36 @@
 
           },
 
-          _setValue: function(value) {
+          _setValue: function (value) {
             this._set("value", value);
             this.onChange(value);
           },
-          _setValueAttr: function(value) {
+          _setValueAttr: function (value) {
             this._setValue(value);
             this.items = value;
             this.dndSource.insertNodes(false, value);
             this.dndSource.sync();
           },
 
-          _onDrop: function(source, node, copy) {
+          _onDrop: function (source, node, copy) {
             var list = [];
 
-            source.getAllNodes().forEach(function(obj, j) {
-                dojo.forEach(this.value,
-                  function(item, i) {
-                    if (obj.id === item.id) {
-                      list.push(this.value[i]);
-                    }
-                  },
-                  this);
-              },
+            source.getAllNodes().forEach(function (obj, j) {
+              dojo.forEach(this.value,
+                function (item, i) {
+                  if (obj.id === item.id) {
+                    list.push(this.value[i]);
+                  }
+                },
+                this);
+            },
               this);
 
             this.items = list;
             this._setValue(list);
           },
 
-          _onDropData: function(dndData, source, nodes, copy) {
+          _onDropData: function (dndData, source, nodes, copy) {
 
             var item = dndData ? (dndData.length ? dndData[0] : dndData) : null;
 
@@ -181,15 +183,15 @@
 
           },
 
-          _proccessDndData: function(dropItem) {
+          _proccessDndData: function (dropItem) {
 
             when(dropItem.data,
               lang.hitch(this,
-                function(model) {
+                function (model) {
 
                   this._valueChangedPromise = when(this._getContentData(model.contentLink),
                     lang.hitch(this,
-                      function(content) {
+                      function (content) {
 
                         if (this.allowedDndTypes.indexOf(content.typeIdentifier) !== -1) {
 
@@ -205,7 +207,7 @@
                 }));
           },
 
-          _showImageEditor: function(content) {
+          _showImageEditor: function (content) {
 
             var body = dojo.body();
             dojo.addClass(body, "media-loading");
@@ -213,11 +215,11 @@
             var imageUrl = content.publicUrl + '?quality=50';
 
             helpers.preloadImage(imageUrl,
-              (function() {
+              (function () {
                 var html =
                   '<div style="width:520px;" class="ImageReferenceSelectorDialog"><div style="max-height:268px;"><img src="' +
-                    imageUrl +
-                    '" class="cropper-image"/></div>';
+                  imageUrl +
+                  '" class="cropper-image"/></div>';
 
                 this.isShowingChildDialog = true;
 
@@ -225,7 +227,7 @@
                   title: "Image Cropper",
                   content: html,
                   contentClass: 'ImageReferenceSelectorDialog',
-                  onShow: (function() {
+                  onShow: (function () {
                     var image = document.querySelector('#' + this.imageEditorDialog.id + ' .cropper-image');
                     this.cropper = new Cropper(image,
                       {
@@ -233,7 +235,7 @@
                         viewMode: 1,
                         data: content.cropDetails,
                         autoCropArea: 1,
-                        crop: (function(e) {
+                        crop: (function (e) {
                           this.cropperData = e.detail;
                         }).bind(this)
                       });
@@ -250,14 +252,14 @@
               }).bind(this));
           },
 
-          _onImageEditorDialogHide: function(evt) {
+          _onImageEditorDialogHide: function (evt) {
             this.isShowingChildDialog = false;
             this.selectedMedia = null;
             this.cropperData = null;
             this.imageEditorDialog.destroyRecursive();
           },
 
-          _onImageEditorDialogExecute: function() {
+          _onImageEditorDialogExecute: function () {
 
             var cropDetails = {
               x: Math.round(this.cropperData.x),
@@ -269,7 +271,7 @@
 
             //checking if in edit mode
             dojo.forEach(this.items,
-              (function(item, i) {
+              (function (item, i) {
                 if (item && item.id && item.id === this.selectedMedia.id) {
                   this.items[i].cropDetails = cropDetails;
                   updated = true;
@@ -290,13 +292,13 @@
             this.onBlur();
           },
 
-          _reload: function() {
+          _reload: function () {
             this.dndSource.selectAll().deleteSelectedNodes();
             this.dndSource.insertNodes(false, this.value);
           },
 
 
-          _createDndElement: function(item, hint) {
+          _createDndElement: function (item, hint) {
 
 
             var node;
@@ -334,7 +336,7 @@
                     href: "#",
                     innerHTML: "",
                     'class': "epi-chromeless epi-iconPen",
-                    onclick: (function(e) {
+                    onclick: (function (e) {
                       this.selectedMedia = item;
                       this._showImageEditor(item);
                     }).bind(this)
@@ -349,10 +351,10 @@
                   href: "#",
                   innerHTML: "",
                   'class': "epi-chromeless epi-iconTrash",
-                  onclick: (function(a) {
+                  onclick: (function (a) {
 
                     dojo.forEach(this.items,
-                      (function(post, i) {
+                      (function (post, i) {
                         if (post && post.id && post.id === item.id) {
                           this.items.splice(i, 1);
                           this.dndSource.selectAll().deleteSelectedNodes();
@@ -395,10 +397,10 @@
           },
 
 
-          _removeImage: function(id) {
+          _removeImage: function (id) {
 
             dojo.forEach(this.items,
-              (function(item, i) {
+              (function (item, i) {
                 if (item && item.id && item.id === id) {
                   this.items.splice(i, 1);
                   return;
@@ -410,7 +412,7 @@
 
           },
 
-          _getContentData: function(contentLink) {
+          _getContentData: function (contentLink) {
             if (!contentLink) {
 
               return null;
