@@ -1,40 +1,40 @@
 ﻿(function () {
   define([
-      // dojo
-      "dojo",
-      "dojo/dom-construct",
-      "dojo/mouse",
-      "dojo/on",
-      "dojo/_base/declare",
-      "dojo/_base/lang",
-      "dojo/dom-class",
-      "dojo/dom-style",
-      "dojo/dom-prop",
-      "dojo/dom-attr",
-      "dojo/dom-construct",
-      "dojo/when",
-      // dijit
-      "dijit/_CssStateMixin",
-      "dijit/_TemplatedMixin",
-      "dijit/_Widget",
-      "dijit/_WidgetsInTemplateMixin",
-      "dijit/form/Button",
-      // epi.shell
-      "epi/dependency",
-      "epi/i18n",
-      "epi/shell/widget/_ValueRequiredMixin",
-      // epi.cms
-      "epi-cms/widget/_Droppable",
-      "epi-cms/widget/_HasChildDialogMixin",
-      "epi/shell/widget/dialog/Dialog",
-      "dojo/dnd/Target",
-      "dojo/dnd/Source",
-      //itmeric
-      "itmeric/scripts/helpers",
-      //template
-      "dojo/text!./templates/template.html"
-    ],
-    function(
+    // dojo
+    "dojo",
+    "dojo/dom-construct",
+    "dojo/mouse",
+    "dojo/on",
+    "dojo/_base/declare",
+    "dojo/_base/lang",
+    "dojo/dom-class",
+    "dojo/dom-style",
+    "dojo/dom-prop",
+    "dojo/dom-attr",
+    "dojo/dom-construct",
+    "dojo/when",
+    // dijit
+    "dijit/_CssStateMixin",
+    "dijit/_TemplatedMixin",
+    "dijit/_Widget",
+    "dijit/_WidgetsInTemplateMixin",
+    "dijit/form/Button",
+    // epi.shell
+    "epi/dependency",
+    "epi/i18n",
+    "epi/shell/widget/_ValueRequiredMixin",
+    // epi.cms
+    "epi-cms/widget/_Droppable",
+    "epi-cms/widget/_HasChildDialogMixin",
+    "epi/shell/widget/dialog/Dialog",
+    "dojo/dnd/Target",
+    "dojo/dnd/Source",
+    //itmeric
+    "itmeric/scripts/helpers",
+    //template
+    "dojo/text!./templates/template.html"
+  ],
+    function (
       // dojo
       dojo,
       domConstruct,
@@ -88,11 +88,10 @@
           dropTarget: null,
           imageWidth: 120,
 
-          postCreate: function() {
-
-            this.allowedDndTypes = this.get('allowedDndTypes');
+          postCreate: function () {
 
             this.inherited(arguments);
+            this.allowedDndTypes = this.get('allowedDndTypes');
 
             this.dropTarget = new Target(this.dropTarget,
               {
@@ -109,19 +108,19 @@
             domStyle.set(this.dropAreaNode, "height", this.calculatedHeight + 'px');
           },
 
-          buildRendering: function() {
+          buildRendering: function () {
             this.inherited(arguments);
           },
 
 
-          _setValueAttr: function(value) {
+          _setValueAttr: function (value) {
 
             if (value != null) {
 
               if (value.hasOwnProperty('cropDetails')) {
                 when(this._getContentData(value.contentLink),
                   lang.hitch(this,
-                    function(content) {
+                    function (content) {
                       if (content) {
                         value.publicUrl = content.publicUrl;
                       }
@@ -135,7 +134,7 @@
             }
           },
 
-          postMixInProperties: function() {
+          postMixInProperties: function () {
 
             this.inherited(arguments);
 
@@ -143,7 +142,7 @@
             this._store = registry.get("epi.cms.contentdata");
           },
 
-          _onDropData: function(dndData, source, nodes, copy) {
+          _onDropData: function (dndData, source, nodes, copy) {
 
             var item = dndData ? (dndData.length ? dndData[0] : dndData) : null;
 
@@ -160,15 +159,15 @@
 
           },
 
-          _proccessDndData: function(dropItem) {
+          _proccessDndData: function (dropItem) {
 
             when(dropItem.data,
               lang.hitch(this,
-                function(model) {
+                function (model) {
 
                   when(this._getContentData(model.contentLink),
                     lang.hitch(this,
-                      function(content) {
+                      function (content) {
 
                         if (this.allowedDndTypes.indexOf(content.typeIdentifier) !== -1) {
 
@@ -184,7 +183,7 @@
                 }));
           },
 
-          _setValue: function(value) {
+          _setValue: function (value) {
 
             this._set("value", value);
             this.onChange(value);
@@ -192,7 +191,7 @@
           },
 
 
-          _showImageEditor: function(content) {
+          _showImageEditor: function (content) {
 
             var body = dojo.body();
             dojo.addClass(body, "media-loading");
@@ -200,18 +199,18 @@
             var imageUrl = content.publicUrl + '?quality=50';
 
             helpers.preloadImage(imageUrl,
-              (function() {
+              (function () {
                 var html =
                   '<div style="width:520px;" class="ImageReferenceSelectorDialog"><div style="max-height:268px;"><img src="' +
-                    imageUrl +
-                    '" class="cropper-image"/></div>';
+                  imageUrl +
+                  '" class="cropper-image"/></div>';
 
                 this.isShowingChildDialog = true;
                 this.imageEditorDialog = new Dialog({
                   title: "Image Cropper",
                   content: html,
                   contentClass: 'dijitDialogScalablePaneContentArea',
-                  onShow: (function() {
+                  onShow: (function () {
                     var image = document.querySelector('#' + this.imageEditorDialog.id + ' .cropper-image');
                     this.cropper = new Cropper(image,
                       {
@@ -219,7 +218,7 @@
                         viewMode: 1,
                         data: content.cropDetails,
                         autoCropArea: 1,
-                        crop: (function(e) {
+                        crop: (function (e) {
                           this.cropperData = e.detail;
                         }).bind(this)
                       });
@@ -236,14 +235,14 @@
           },
 
 
-          _onImageEditorDialogHide: function(evt) {
+          _onImageEditorDialogHide: function (evt) {
             this.isShowingChildDialog = false;
             this.selectedMedia = null;
             this.cropperData = null;
             this.imageEditorDialog.destroyRecursive();
           },
 
-          _onImageEditorDialogExecute: function() {
+          _onImageEditorDialogExecute: function () {
 
 
             this.selectedMedia.cropDetails = {
@@ -257,7 +256,7 @@
             this.onBlur();
           },
 
-          _updateDisplayNode: function(item) {
+          _updateDisplayNode: function (item) {
 
             dojo.empty(this.itemsContainer);
 
@@ -293,7 +292,7 @@
                     href: "#",
                     innerHTML: "",
                     'class': "epi-chromeless epi-iconPen",
-                    onclick: (function() {
+                    onclick: (function () {
                       this.selectedMedia = item;
                       this._showImageEditor(item);
                     }).bind(this)
@@ -307,7 +306,7 @@
                   href: "#",
                   innerHTML: "",
                   'class': "epi-chromeless epi-iconTrash",
-                  onclick: (function() {
+                  onclick: (function () {
                     this._removeImage();
                   }).bind(this)
 
@@ -325,13 +324,13 @@
             }
           },
 
-          _removeImage: function() {
+          _removeImage: function () {
 
             this._setValue({});
             this.onBlur();
           },
 
-          _getContentData: function(contentLink) {
+          _getContentData: function (contentLink) {
             if (!contentLink) {
 
               return null;

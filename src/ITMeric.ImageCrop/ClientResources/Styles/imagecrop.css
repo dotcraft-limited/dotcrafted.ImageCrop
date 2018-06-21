@@ -20,7 +20,6 @@
     padding-right: 0;
 }
 
-
 .media-selector .media-list .media-item .media-buttons {
     text-align: right;
 }
@@ -28,8 +27,6 @@
 .media-selector .media-list .media-item .media-buttons .epi-chromeless {
     display: inline-block;
 }
-
-/*.media-selector .drop-area { display: inline-block; }*/
 
 .media-selector .drop-area .dijitInputContainer {
     display: table;
@@ -43,7 +40,6 @@
     display: table-cell;
     background-position: 50% 50%;
 }
-
 
 .media-selector .drop-area .dijitInputContainer .dojoDndItemAfter {
     border-right: 2px solid #369;

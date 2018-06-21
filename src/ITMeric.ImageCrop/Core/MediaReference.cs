@@ -15,7 +15,7 @@ namespace ITMeric.ImageCrop.Core
         //protected Injected<ILogger> Logger;
         //protected Injected<IContentRepository> ContentRepository;
 
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public abstract MediaReferenceType MediaType { get; } 
 

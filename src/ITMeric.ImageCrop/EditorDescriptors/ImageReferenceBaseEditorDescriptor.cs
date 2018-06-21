@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using EPiServer.Core;
 using EPiServer.Shell;
 using EPiServer.Shell.ObjectEditing;
@@ -30,9 +29,10 @@ namespace ITMeric.ImageCrop.EditorDescriptors
                     allowedTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
                         .Where(t => imageDataType.IsAssignableFrom(t)).ToArray();
                 }
-                
 
-                metadata.EditorConfiguration["allowedDndTypes"] = allowedTypes.Select(x => x.FullName.ToLower()).ToArray();
+
+                metadata.EditorConfiguration["allowedDndTypes"] =
+                    allowedTypes.Select(x => x.FullName.ToLower()).ToArray();
             }
 
             metadata.CustomEditorSettings["uiWrapperType"] = UiWrapperType.Floating;
@@ -40,7 +40,7 @@ namespace ITMeric.ImageCrop.EditorDescriptors
 
         //public override void ModifyBaseMetadata(ExtendedMetadata metadata, IEnumerable<Attribute> attributes)
         //{
-           
+
         //}
     }
 }

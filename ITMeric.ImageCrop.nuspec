@@ -6,7 +6,7 @@
     <title>ITMeric.ImageCrop</title>
     <authors>ITMeric</authors>
     <owners>ITMeric</owners>
-    <projectUrl>https://github.com/xxx</projectUrl>
+    <projectUrl>https://github.com/ITMeric/ITMeric.ImageCrop</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Image Cropper property editors for EPiServer site</description>
     <copyright>Copyright (c) 2018 ITMeric</copyright>

@@ -1,8 +1,4 @@
 ﻿using System;
-using EPiServer.Core;
-using EPiServer.Logging;
-using EPiServer.Web;
-using EPiServer.Web.Routing;
 using Newtonsoft.Json;
 
 namespace ITMeric.ImageCrop.Core

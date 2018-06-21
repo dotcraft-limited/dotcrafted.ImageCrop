@@ -123,9 +123,7 @@
             this.connect(this.dropTarget, "onDropData", "_onDropData");
             this.connect(this.dndSource, "onDrop", lang.hitch(this, this._onDrop));
 
-            this.calculatedHeight = this.get('cropRatio') > 0
-              ? Math.round(this.imageWidth / this.get('cropRatio'))
-              : 80;
+            this.calculatedHeight = Math.round(this.imageWidth / this.get('cropRatio'));
             domStyle.set(this.dropAreaNode, "height", this.calculatedHeight + 'px');
           },
 
@@ -228,9 +226,7 @@
                   content: html,
                   contentClass: 'ImageReferenceSelectorDialog',
                   onShow: (function() {
-                    var image = document.querySelector('#' +
-                      this.imageEditorDialog.id +
-                      ' .cropper-image');
+                    var image = document.querySelector('#' + this.imageEditorDialog.id + ' .cropper-image');
                     this.cropper = new Cropper(image,
                       {
                         aspectRatio: this.get('cropRatio'),

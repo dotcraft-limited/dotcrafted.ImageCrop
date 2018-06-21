@@ -4,7 +4,7 @@
 
     exports.serializeImage = function(image, cropperData) {
       return ({
-        id: image.id ? image.id : new Date().getTime().toString(),
+        id: image.id ? image.id : new Date().getTime(),
         contentLink: image.contentLink,
         contentReferenceId: image.contentGuid,
         publicUrl: image.publicUrl,
