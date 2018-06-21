@@ -47,9 +47,11 @@
   <PropertyGroup>
 	<Configuration>Release</Configuration>
     <SolutionDir Condition="$(SolutionDir) == ''">$(MSBuildProjectDirectory)</SolutionDir>
-    <ProjectDir>$(SolutionDir)\src\ITMeric.ImageCrop</ProjectDir>
-    <NuGetExe>$(SolutionDir)\NuGet.exe</NuGetExe>
+    <ProjectDir>$(SolutionDir)\ITMeric.ImageCrop</ProjectDir>
     <TmpOutDir>$(MSBuildProjectDirectory)\tmp</TmpOutDir>
+	<BuildDir>$(MSBuildProjectDirectory)\build</BuildDir>
+    <OutputFileName>$(SolutionDir)\ITMeric.ImageCrop.zip</OutputFileName>
+	<NuGetExe>$(SolutionDir)\NuGet.exe</NuGetExe>
     <NuspecFile>$(SolutionDir)\ITMeric.ImageCrop.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -63,38 +65,31 @@
       </GetVersion>
     
       <MakeDir Directories="$(TmpOutDir)" />
-
-      <!-- Create the Versioned out dir for the client resources-->
-      <!-- <MakeDir Directories="$(TmpOutDir)\content\$(Version)" /> -->
-    
+      
       <!-- Copy -->
       <ItemGroup>
         <ClientResources Include="$(ProjectDir)\ClientResources\**\*" />
       </ItemGroup>  
       
       <Copy SourceFiles="$(ProjectDir)\module.config" DestinationFolder="$(TmpOutDir)\content" />
-      <!-- <Copy SourceFiles="@(ClientResources)" DestinationFiles="@(ClientResources -> '$(TmpOutDir)\content\$(Version)\ClientResources\%(RecursiveDir)%(Filename)%(Extension)')"/> -->
 	  <Copy SourceFiles="@(ClientResources)" DestinationFiles="@(ClientResources -> '$(TmpOutDir)\content\ClientResources\%(RecursiveDir)%(Filename)%(Extension)')"/>
-      
 
-      <!-- Update the module config with the version information -->
-      <!-- <XmlPoke XmlInputPath="$(TmpOutDir)\content\module.config" Query="/module/@clientResourceRelativePath" Value="$(Version)" /> -->
-
-	<ZipDirectory
+	  <ZipDirectory
 		InputPath="$(TmpOutDir)\content"
-		OutputFileName="$(SolutionDir)\ITMeric.ImageCrop.zip"
+		OutputFileName="$(OutputFileName)"
 		OverwriteExistingFile="true" />
 
       <!-- Create the package -->
       <PropertyGroup>
         <NugetCommand>
-          "$(NuGetExe)" pack "$(NuspecFile)" -OutputDirectory "$(SolutionDir.TrimEnd('\\'))" -Version "$(Version)" -Properties Configuration=$(Configuration)
+          "$(NuGetExe)" pack "$(NuspecFile)" -OutputDirectory "$(BuildDir)" -Version "$(Version)" -Properties Configuration=$(Configuration)
         </NugetCommand>
 
       </PropertyGroup>
       <Exec Command="$(NugetCommand)"/>
 
       <!-- Cleanup -->
+	  <Delete Files="$(OutputFileName)" />
       <RemoveDir Directories="$(TmpOutDir)" />
     </Target>
   </Project>
