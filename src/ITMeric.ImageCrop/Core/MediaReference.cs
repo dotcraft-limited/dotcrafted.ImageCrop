@@ -19,7 +19,7 @@ namespace ITMeric.ImageCrop.Core
 
         public abstract MediaReferenceType MediaType { get; } 
 
-        public string PublicUrl { get; set; }
+        public string PreviewUrl { get; set; }
 
         [JsonIgnore]
         public virtual string Url { get; }

@@ -1,38 +1,38 @@
 ﻿(function () {
   define([
     // dojo
-    "dojo",
-    "dojo/dom-construct",
-    "dojo/mouse",
-    "dojo/on",
-    "dojo/_base/declare",
-    "dojo/_base/lang",
-    "dojo/dom-class",
-    "dojo/dom-style",
-    "dojo/dom-prop",
-    "dojo/dom-attr",
-    "dojo/dom-construct",
-    "dojo/when",
+    'dojo',
+    'dojo/dom-construct',
+    'dojo/mouse',
+    'dojo/on',
+    'dojo/_base/declare',
+    'dojo/_base/lang',
+    'dojo/dom-class',
+    'dojo/dom-style',
+    'dojo/dom-prop',
+    'dojo/dom-attr',
+    'dojo/dom-construct',
+    'dojo/when',
     // dijit
-    "dijit/_CssStateMixin",
-    "dijit/_TemplatedMixin",
-    "dijit/_Widget",
-    "dijit/_WidgetsInTemplateMixin",
-    "dijit/form/Button",
+    'dijit/_CssStateMixin',
+    'dijit/_TemplatedMixin',
+    'dijit/_Widget',
+    'dijit/_WidgetsInTemplateMixin',
+    'dijit/form/Button',
     // epi.shell
-    "epi/dependency",
-    "epi/i18n",
-    "epi/shell/widget/_ValueRequiredMixin",
+    'epi/dependency',
+    'epi/i18n',
+    'epi/shell/widget/_ValueRequiredMixin',
     // epi.cms
-    "epi-cms/widget/_Droppable",
-    "epi-cms/widget/_HasChildDialogMixin",
-    "epi/shell/widget/dialog/Dialog",
-    "epi/shell/dnd/Target",
-    "epi/shell/dnd/Source",
+    'epi-cms/widget/_Droppable',
+    'epi-cms/widget/_HasChildDialogMixin',
+    'epi/shell/widget/dialog/Dialog',
+    'epi/shell/dnd/Target',
+    'epi/shell/dnd/Source',
     //itmeric
-    "itmeric/scripts/helpers",
+    'itmeric/scripts/helpers',
     //template
-    "dojo/text!./templates/template.html"
+    'dojo/text!./templates/template.html'
   ],
     function (
       // dojo
@@ -69,7 +69,7 @@
       //template
       template
     ) {
-      return declare("itmeric.Editors.ImageReferenceSelector",
+      return declare('itmeric.Editors.ImageReferenceSelector',
         [
           _Widget, _TemplatedMixin, _WidgetsInTemplateMixin, _CssStateMixin, _HasChildDialogMixin, _Droppable,
           _ValueRequiredMixin
@@ -86,12 +86,22 @@
           dialog: null,
           mediaSource: null,
           dropTarget: null,
-          imageWidth: 120,
+          imageWidth: 120,      
 
           postCreate: function () {
 
             this.inherited(arguments);
-            this.allowedDndTypes = this.get('allowedDndTypes');
+            this.allowedDndTypes = this.get('allowedDndTypes');         
+
+            this.calculatedHeight = this.get('cropRatio') > 0
+              ? Math.round(this.imageWidth / this.get('cropRatio'))
+              : 80;
+
+            //domStyle.set(this.dropAreaNode, 'min-height', this.calculatedHeight + 'px');
+          },          
+
+          buildRendering: function () {
+            this.inherited(arguments);
 
             this.dropTarget = new Target(this.dropTarget,
               {
@@ -100,52 +110,29 @@
               });
 
 
-            this.connect(this.dropTarget, "onDropData", "_onDropData");
-
-            this.calculatedHeight = this.get('cropRatio') > 0
-              ? Math.round(this.imageWidth / this.get('cropRatio'))
-              : 80;
-            domStyle.set(this.dropAreaNode, "height", this.calculatedHeight + 'px');
+            this.connect(this.dropTarget, 'onDropData', '_onDropData');
           },
 
-          buildRendering: function () {
-            this.inherited(arguments);
-          },
-
-
-          _setValueAttr: function (value) {
-
+          _setValueAttr: function (value) {            
             if (value != null) {
-
               if (value.hasOwnProperty('cropDetails')) {
-                when(this._getContentData(value.contentLink),
-                  lang.hitch(this,
-                    function (content) {
-                      if (content) {
-                        value.publicUrl = content.publicUrl;
-                      }
-
-                      this.value = value;
-                      this._updateDisplayNode(this.value);
-                    }));
+                this.value = value;
+                this._updateDisplayNode(this.value);
               } else {
                 alert('Unrecognized media type');
               }
             }
           },
 
-          postMixInProperties: function () {
-
-            this.inherited(arguments);
-
-            var registry = dependency.resolve("epi.storeregistry");
-            this._store = registry.get("epi.cms.contentdata");
+          _setReadOnlyAttr: function (readOnly) {
+            this._set("readOnly", readOnly);
+            domStyle.set(this.dropArea, "display", readOnly ? "none" : "");
           },
 
           _onDropData: function (dndData, source, nodes, copy) {
 
             var item = dndData ? (dndData.length ? dndData[0] : dndData) : null;
-
+            
             if (!item) {
               return;
             }
@@ -165,49 +152,39 @@
               lang.hitch(this,
                 function (model) {
 
-                  when(this._getContentData(model.contentLink),
-                    lang.hitch(this,
-                      function (content) {
+                  if (this.allowedDndTypes.indexOf(model.typeIdentifier) !== -1) {
+                    this.selectedMedia = helpers.serializeImage(model);
+                    this._showImageEditor(model);
 
-                        if (this.allowedDndTypes.indexOf(content.typeIdentifier) !== -1) {
-
-                          //Clear the pointer to the promise since it is resolved.
-                          this._valueChangedPromise = null;
-                          this.selectedMedia = helpers.serializeImage(content);
-                          this._showImageEditor(content);
-
-                        } else {
-                          alert('Unsuported media type.');
-                        }
-                      }));
+                  } else {
+                    alert('Unsuported media type.');
+                  }                  
                 }));
           },
 
           _setValue: function (value) {
-
-            this._set("value", value);
-            this.onChange(value);
+            this._set('value', value);
+            this.onChange(value);            
             this._updateDisplayNode(value);
+            this.validate();
           },
 
 
           _showImageEditor: function (content) {
 
             var body = dojo.body();
-            dojo.addClass(body, "media-loading");
+            dojo.addClass(body, 'media-loading');
 
-            var imageUrl = content.publicUrl + '?quality=50';
+            var imageUrl = content.previewUrl + '?quality=50';
 
             helpers.preloadImage(imageUrl,
               (function () {
                 var html =
-                  '<div style="width:520px;" class="ImageReferenceSelectorDialog"><div style="max-height:268px;"><img src="' +
-                  imageUrl +
-                  '" class="cropper-image"/></div>';
+                  '<div class="ImageReferenceSelectorDialog"><div><img src="' + imageUrl + '" class="cropper-image"/></div>';
 
                 this.isShowingChildDialog = true;
                 this.imageEditorDialog = new Dialog({
-                  title: "Image Cropper",
+                  title: 'Image Cropper',
                   content: html,
                   contentClass: 'dijitDialogScalablePaneContentArea',
                   onShow: (function () {
@@ -230,7 +207,7 @@
 
                 this.imageEditorDialog.show();
 
-                dojo.removeClass(body, "media-loading");
+                dojo.removeClass(body, 'media-loading');
               }).bind(this));
           },
 
@@ -282,43 +259,46 @@
 
               var img = domConstruct.create('img');
 
-              if (item.hasOwnProperty('cropDetails')) {
 
+              domAttr.set(img, 'src', helpers.getImageUrl(item, this.imageWidth));
 
-                domAttr.set(img, "src", helpers.getImageUrl(item, this.imageWidth));
-
-                var btnCrop = new domConstruct.create("a",
-                  {
-                    href: "#",
-                    innerHTML: "",
-                    'class': "epi-chromeless epi-iconPen",
-                    onclick: (function () {
-                      this.selectedMedia = item;
-                      this._showImageEditor(item);
-                    }).bind(this)
-                  });
-
-                domConstruct.place(btnCrop, buttonsNode, "last");
-              }
-
-              var btnDelete = new domConstruct.create("a",
+              var btnCrop = new domConstruct.create('a',
                 {
-                  href: "#",
-                  innerHTML: "",
-                  'class': "epi-chromeless epi-iconTrash",
+                  href: '#',
+                  innerHTML: '',
+                  'class': 'epi-chromeless epi-iconPen',
                   onclick: (function () {
+
+                    if (this.readOnly)
+                      return;
+
+                    this.selectedMedia = item;
+                    this._showImageEditor(item);
+                  }).bind(this)
+                });
+
+              var btnDelete = new domConstruct.create('a',
+                {
+                  href: '#',
+                  innerHTML: '',
+                  'class': 'epi-chromeless epi-iconTrash',
+                  onclick: (function () {
+
+                    if (this.readOnly)
+                      return;
+
                     this._removeImage();
                   }).bind(this)
 
                 });
 
+              domConstruct.place(btnCrop, buttonsNode, 'last');
+              domConstruct.place(btnDelete, buttonsNode, 'last');
+              domConstruct.place(img, innerNode, 'last');
+              domConstruct.place(buttonsNode, innerNode, 'last');
+              domConstruct.place(innerNode, node, 'last');
 
-              domConstruct.place(btnDelete, buttonsNode, "last");
-              domConstruct.place(img, innerNode, "last");
-              domConstruct.place(buttonsNode, innerNode, "last");
-              domConstruct.place(innerNode, node, "last");
-
-              domConstruct.place(node, this.itemsContainer, "last");
+              domConstruct.place(node, this.itemsContainer, 'last');
             } else {
               dojo.setStyle(this.dropArea, 'display', 'block');
             }
@@ -326,17 +306,9 @@
 
           _removeImage: function () {
 
-            this._setValue({});
+            this._setValue(null);
             this.onBlur();
-          },
-
-          _getContentData: function (contentLink) {
-            if (!contentLink) {
-
-              return null;
-            }
-            return this._store.get(contentLink);
-          }
+          }       
         });
     });
 })()

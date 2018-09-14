@@ -2,45 +2,47 @@
 (function () {
   define([
     // dojo
-    "dojo",
-    "dojo/dom-construct",
-    "dojo/mouse",
-    "dojo/on",
-    "dojo/_base/declare",
-    "dojo/_base/lang",
-    "dojo/dom-class",
-    "dojo/dom-style",
-    "dojo/dom-prop",
-    "dojo/dom-attr",
-    "dojo/dom-construct",
-    "dojo/query",
-    "dojo/when",
+    'dojo',
+    'dojo/dom-construct',
+    'dojo/mouse',
+    'dojo/on',
+    'dojo/_base/declare',
+    'dojo/_base/lang',
+    'dojo/dom-class',
+    'dojo/dom-style',
+    'dojo/dom-prop',
+    'dojo/dom-attr',
+    'dojo/dom-construct',
+    'dojo/query',
+    'dojo/when',
+    'dojo/aspect',
 
     // dijit,
-    "dijit/_CssStateMixin",
-    "dijit/_TemplatedMixin",
-    "dijit/_Widget",
-    "dijit/_WidgetsInTemplateMixin",
-    "dijit/form/Button",
+    'dijit/_CssStateMixin',
+    'dijit/_TemplatedMixin',
+    'dijit/_Widget',
+    'dijit/_WidgetsInTemplateMixin',
+    'dijit/form/Button',
 
 
     // epi.shell
-    "epi/dependency",
-    "epi/i18n",
-    "epi/shell/widget/_ValueRequiredMixin",
+    'epi/dependency',
+    'epi/i18n',
+    'epi/shell/widget/_ValueRequiredMixin',
 
 
     // epi.cms
-    "epi-cms/widget/_Droppable",
-    "epi-cms/widget/_HasChildDialogMixin",
-    "epi/shell/widget/dialog/Dialog",
-    "epi/shell/dnd/Target",
-    "epi/shell/dnd/Source",
+    'epi-cms/widget/_Droppable',
+    'epi-cms/widget/_HasChildDialogMixin',
+    'epi-cms/_ContentContextMixin',
+    'epi/shell/widget/dialog/Dialog',
+    'epi/shell/dnd/Target',
+    'dojo/dnd/Source',
 
-    "itmeric/scripts/helpers",
+    'itmeric/scripts/helpers',
 
     //template
-    "dojo/text!./templates/template.html",
+    'dojo/text!./templates/template.html',
   ],
     function (
       // dojo
@@ -57,6 +59,7 @@
       domConstruct,
       query,
       when,
+      aspect,
 
       // dijit
       _CssStateMixin,
@@ -73,6 +76,7 @@
       // epi.cms
       _Droppable,
       _HasChildDialogMixin,
+      _ContentContextMixin,
       Dialog,
       Target,
       Source,
@@ -81,10 +85,10 @@
       helpers,
       template
     ) {
-      return declare("itmeric.Editors.ImageReferenceListSelector",
+      return declare('itmeric.Editors.ImageReferenceListSelector',
         [
           _Widget, _TemplatedMixin, _WidgetsInTemplateMixin, _CssStateMixin, _HasChildDialogMixin, _Droppable,
-          _ValueRequiredMixin
+          _ValueRequiredMixin, _ContentContextMixin
         ],
         {
           templateString: template,
@@ -101,9 +105,17 @@
           imageWidth: 120,
 
           postCreate: function () {
-
             this.inherited(arguments);
+
             this.allowedDndTypes = this.get('allowedDndTypes');
+
+            this.calculatedHeight = this.get('cropRatio') > 0
+              ? Math.round(this.imageWidth / this.get('cropRatio'))
+              : 80;           
+          },
+
+          buildRendering: function () {
+            this.inherited(arguments);
 
             this.dndSource = new Source(this.itemsContainer,
               {
@@ -114,39 +126,57 @@
                 horizontal: true,
                 accept: ['image']
               });
+            
+            this.dndSource.checkAcceptance = lang.hitch(this, this._checkAcceptance);
+
+            if (this.readOnly) {
+              return;
+            }
 
             this.dropTarget = new Target(this.dropTarget,
               {
                 accept: this.allowedDndTypes,
                 createItemOnDrop: false
               });
+            
 
-
-            this.connect(this.dropTarget, "onDropData", "_onDropData");
-            this.connect(this.dndSource, "onDrop", lang.hitch(this, this._onDrop));
-
-            this.calculatedHeight = Math.round(this.imageWidth / this.get('cropRatio'));
-            domStyle.set(this.dropAreaNode, "height", this.calculatedHeight + 'px');
+            this.connect(this.dropTarget, 'onDropData', '_onDropData');
+            this.connect(this.dndSource, 'onDrop', lang.hitch(this, this._onDrop));
           },
 
-
-          postMixInProperties: function () {
-
-            this.inherited(arguments);
-            var registry = dependency.resolve("epi.storeregistry");
-            this._store = registry.get("epi.cms.contentdata");
-
+          isValid: function () {
+            return this.value != null && this.value.length > 0;
           },
 
           _setValue: function (value) {
-            this._set("value", value);
-            this.onChange(value);
+            this._set('value', value);
+            if (this.onChange) {
+              this.onChange(value);
+              this.validate();
+            }
           },
           _setValueAttr: function (value) {
             this._setValue(value);
-            this.items = value;
-            this.dndSource.insertNodes(false, value);
-            this.dndSource.sync();
+            this.items = value || [];     
+            
+            if (this.value != null) {
+              this.dndSource.insertNodes(false, this.value);
+              this.dndSource.sync();
+            }            
+          },
+
+          _setReadOnlyAttr: function (readOnly) {
+            this._set("readOnly", readOnly);
+            domStyle.set(this.dropArea, "display", readOnly ? "none" : "");
+          },
+
+          _checkAcceptance: function (source, nodes) {
+
+            if (this.readOnly || nodes === undefined) {
+              return false;
+            }
+
+            return this._source.defaultCheckAcceptance(source, nodes);
           },
 
           _onDrop: function (source, node, copy) {
@@ -155,7 +185,7 @@
             source.getAllNodes().forEach(function (obj, j) {
               dojo.forEach(this.value,
                 function (item, i) {
-                  if (obj.id === item.id) {
+                  if (parseInt(obj.id) === item.id) {
                     list.push(this.value[i]);
                   }
                 },
@@ -165,6 +195,7 @@
 
             this.items = list;
             this._setValue(list);
+            this._reload();
           },
 
           _onDropData: function (dndData, source, nodes, copy) {
@@ -189,42 +220,34 @@
               lang.hitch(this,
                 function (model) {
 
-                  this._valueChangedPromise = when(this._getContentData(model.contentLink),
-                    lang.hitch(this,
-                      function (content) {
+                  if (this.allowedDndTypes.indexOf(model.typeIdentifier) !== -1) {
 
-                        if (this.allowedDndTypes.indexOf(content.typeIdentifier) !== -1) {
+                    this.selectedMedia = model;
+                    this._showImageEditor(model);
 
-                          //Clear the pointer to the promise since it is resolved.
-                          this._valueChangedPromise = null;
-                          this.selectedMedia = content;
-                          this._showImageEditor(content);
+                  } else {
+                    alert('Unsuported media type.');
+                  }
 
-                        } else {
-                          alert('Unsuported media type.');
-                        }
-                      }));
                 }));
           },
 
           _showImageEditor: function (content) {
 
             var body = dojo.body();
-            dojo.addClass(body, "media-loading");
+            dojo.addClass(body, 'media-loading');
 
-            var imageUrl = content.publicUrl + '?quality=50';
+            var imageUrl = content.previewUrl + '?quality=50';
 
             helpers.preloadImage(imageUrl,
               (function () {
                 var html =
-                  '<div style="width:520px;" class="ImageReferenceSelectorDialog"><div style="max-height:268px;"><img src="' +
-                  imageUrl +
-                  '" class="cropper-image"/></div>';
+                  '<div class="ImageReferenceSelectorDialog"><div><img src="' + imageUrl + '" class="cropper-image"/></div>';
 
                 this.isShowingChildDialog = true;
 
                 this.imageEditorDialog = new Dialog({
-                  title: "Image Cropper",
+                  title: 'Image Cropper',
                   content: html,
                   contentClass: 'ImageReferenceSelectorDialog',
                   onShow: (function () {
@@ -247,7 +270,7 @@
 
                 this.imageEditorDialog.show();
 
-                dojo.removeClass(body, "media-loading");
+                dojo.removeClass(body, 'media-loading');
 
               }).bind(this));
           },
@@ -282,6 +305,7 @@
 
               var item = helpers.serializeImage(this.selectedMedia, cropDetails);
 
+              this.items = this.items || [];
               this.items.push(item);
               this.dndSource.insertNodes(false, [item]);
             } else {
@@ -303,7 +327,7 @@
 
             var node;
 
-            if (hint !== "avatar") {
+            if (hint !== 'avatar') {
 
               node = domConstruct.create('li',
                 {
@@ -328,30 +352,30 @@
                   'class': 'media-buttons'
                 });
 
-
-              if (item.hasOwnProperty('cropDetails')) {
-
-                var btnCrop = new domConstruct.create("a",
-                  {
-                    href: "#",
-                    innerHTML: "",
-                    'class': "epi-chromeless epi-iconPen",
-                    onclick: (function (e) {
-                      this.selectedMedia = item;
-                      this._showImageEditor(item);
-                    }).bind(this)
-                  });
-
-
-                domConstruct.place(btnCrop, buttonsNode, "last");
-              }
-
-              var btnDelete = new domConstruct.create("a",
+              var btnCrop = new domConstruct.create('a',
                 {
-                  href: "#",
-                  innerHTML: "",
-                  'class': "epi-chromeless epi-iconTrash",
+                  href: '#',
+                  innerHTML: '',
+                  'class': 'epi-chromeless epi-iconPen',
+                  onclick: (function (e) {
+
+                    if (this.readOnly)
+                      return;
+
+                    this.selectedMedia = item;
+                    this._showImageEditor(item);
+                  }).bind(this)
+                });                            
+
+              var btnDelete = new domConstruct.create('a',
+                {
+                  href: '#',
+                  innerHTML: '',
+                  'class': 'epi-chromeless epi-iconTrash',
                   onclick: (function (a) {
+
+                    if (this.readOnly)
+                      return;
 
                     dojo.forEach(this.items,
                       (function (post, i) {
@@ -363,39 +387,40 @@
                         }
                       }).bind(this));
 
+                    if (this.items.length === 0) {
+                      this.items = null;
+                    }
+
                     this.value = this.items;
 
                     this._setValue(this.value);
 
                   }).bind(this)
-                });
+                });              
 
+              domConstruct.place(btnCrop, buttonsNode, 'last');
+              domConstruct.place(btnDelete, buttonsNode, 'last');
+              domConstruct.place(img, innerNode, 'last');
+              domConstruct.place(buttonsNode, innerNode, 'last');
+              domConstruct.place(innerNode, node, 'last');
 
-              domConstruct.place(btnDelete, buttonsNode, "last");
-              domConstruct.place(img, innerNode, "last");
-              domConstruct.place(buttonsNode, innerNode, "last");
-              domConstruct.place(innerNode, node, "last");
-
-              domConstruct.place(node, this.itemsContainer, "last");
+              domConstruct.place(node, this.itemsContainer, 'last');
             } else {
 
-              node = domConstruct.create("div", { class: "source-avatar" });
+              node = domConstruct.create('div', { class: 'source-avatar' });
 
               var avatarImg = dojo.doc.createElement('img');
 
-              domAttr.set(avatarImg, "src", helpers.getImageUrl(item, this.imageWidth));
+              domAttr.set(avatarImg, 'src', helpers.getImageUrl(item, this.imageWidth));
               domConstruct.place(avatarImg, node);
             }
 
             return {
-              "node": node,
-              "type": ['image'],
-              "data": item
+              'node': node,
+              'type': ['image'],
+              'data': item
             };
-
-
           },
-
 
           _removeImage: function (id) {
 
@@ -410,14 +435,6 @@
             this._setValue(this.items);
             this._reload();
 
-          },
-
-          _getContentData: function (contentLink) {
-            if (!contentLink) {
-
-              return null;
-            }
-            return this._store.get(contentLink);
           }
         });
     });

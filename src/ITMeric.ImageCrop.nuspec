@@ -11,10 +11,10 @@
     <description>Image Cropper property editors for EPiServer site</description>
     <copyright>Copyright (c) 2018 ITMeric</copyright>
     <tags>EPiServer CMS ImageCropper Cropper</tags>
-    <iconUrl>https://github.com/ITMeric/ITMeric.ImageCrop/blob/master/icon.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/ITMeric/ITMeric.ImageCrop/master/icon.png</iconUrl>
     <dependencies>
       <dependency id="EPiServer.CMS.Core" version="[11.1.0, 12.0)" /> 
-      <dependency id="ImageResizer.Plugins.EPiServerBlobReader" version="[7.0.0, 8.0.0)" />
+      <dependency id="ImageResizer.Plugins.EPiServerBlobReader" version="[7.0.1, 8.0.0)" />
     </dependencies>
   </metadata>
   <files>

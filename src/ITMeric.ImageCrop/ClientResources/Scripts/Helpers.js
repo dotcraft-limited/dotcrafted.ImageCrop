@@ -7,16 +7,16 @@
         id: image.id ? image.id : new Date().getTime(),
         contentLink: image.contentLink,
         contentReferenceId: image.contentGuid,
-        publicUrl: image.publicUrl,
+        previewUrl: image.previewUrl,
         cropDetails: cropperData
       });
     }
 
     exports.getImageUrl = function(item, imageWidth) {
-      var imageUrl = item.publicUrl;
+      var imageUrl = item.previewUrl;
 
-      if (item.cropDetails !== null)
-        imageUrl += "?crop=" +
+      if (item.cropDetails !== null) {
+        imageUrl += (imageUrl.indexOf('?') === -1 ? "?" : "&") + "crop=" +
           item.cropDetails.x +
           "," +
           item.cropDetails.y +
@@ -26,7 +26,7 @@
           (item.cropDetails.y + item.cropDetails.height) +
           "&width=" +
           imageWidth;
-      else
+      } else
         imageUrl += "?width=" + imageWidth;
 
       return imageUrl;
