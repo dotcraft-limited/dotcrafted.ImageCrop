@@ -30,3 +30,19 @@ public virtual ImageReferenceList ImageReferenceList { get; set; }
 
 ```
 
+Render image (Markup):
+
+The easiest way to render a cropped image is to use `GetCropUrl` extension method:
+
+```
+@model ITMeric.ImageCrop.Core.ImageReference
+    
+<img src="@Model.GetCropUrl(width: 100, height: 100)" />
+
+```
+
+In case you need to provide a fallback image, you can specify fallback optional paramters as follows:
+
+```
+<img src="@Model.GetCropUrl(width: 100, height: 100, fallback: "/fallback.jpg")" />
+```
