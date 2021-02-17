@@ -1,0 +1,19 @@
+<div data-dojo-attach-point="resourceName" class="dijitReset dijitInputField dijitInputContainer dijitInline epi-resourceInputContainer media-selector" id="widget_${id}">    
+    <ul data-dojo-attach-point="itemsContainer" class="media-list"></ul>
+    <a href="#" data-dojo-type="dijit/layout/_LayoutWidget" data-dojo-attach-point="button" data-dojo-attach-event="onClick: _onButtonClick">            
+        <div data-dojo-attach-point="dropArea">
+            <div data-dojo-attach-point="dropAreaNode" class="dijit dijitReset dijitInline dijitInlineTable dijitLeft dijitTextBox displayNode drop-area-inner">
+                <div class="dijitReset dijitLeft dijitInputField dijitInputContainer">
+                    <div data-dojo-attach-point="dropTarget" class="epi-content-area-actionscontainer dropMediaTarget">
+                        Click to select image
+                    </div>
+                        
+                </div>                    
+            </div>
+                
+        </div>
+    </a>
+    <div id="cropper" display="none"></div>
+    <a></a>
+    <a data-dojo-attach-point="clearButton" class="btnClear">x</a>
+</div>

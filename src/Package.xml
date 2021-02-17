@@ -47,12 +47,12 @@
   <PropertyGroup>
 	<Configuration>Release</Configuration>
     <SolutionDir Condition="$(SolutionDir) == ''">$(MSBuildProjectDirectory)</SolutionDir>
-    <ProjectDir>$(SolutionDir)\ITMeric.ImageCrop</ProjectDir>
+    <ProjectDir>$(SolutionDir)\dotcrafted.ImageCrop</ProjectDir>
     <TmpOutDir>$(MSBuildProjectDirectory)\tmp</TmpOutDir>
 	<BuildDir>$(MSBuildProjectDirectory)\build</BuildDir>
-    <OutputFileName>$(SolutionDir)\ITMeric.ImageCrop.zip</OutputFileName>
+    <OutputFileName>$(SolutionDir)\dotcrafted.ImageCrop.zip</OutputFileName>
 	<NuGetExe>$(SolutionDir)\NuGet.exe</NuGetExe>
-    <NuspecFile>$(SolutionDir)\ITMeric.ImageCrop.nuspec</NuspecFile>
+    <NuspecFile>$(SolutionDir)\dotcrafted.ImageCrop.nuspec</NuspecFile>
   </PropertyGroup>
 
     <Target Name="CreateNugetPackage" AfterTargets="Build">
@@ -60,7 +60,7 @@
         <Version></Version>
       </PropertyGroup>
       
-      <GetVersion AssemblyPath="$(ProjectDir)\bin\$(Configuration)\ITMeric.ImageCrop.dll">
+      <GetVersion AssemblyPath="$(ProjectDir)\bin\$(Configuration)\dotcrafted.ImageCrop.dll">
         <Output TaskParameter="Version" PropertyName="Version" />
       </GetVersion>
     
@@ -81,15 +81,13 @@
 
       <!-- Create the package -->
       <PropertyGroup>
-        <NugetCommand>
-          "$(NuGetExe)" pack "$(NuspecFile)" -OutputDirectory "$(BuildDir)" -Version "$(Version)" -Properties Configuration=$(Configuration)
-        </NugetCommand>
+        <NugetCommand>"$(NuGetExe)" pack "$(NuspecFile)" -OutputDirectory "$(BuildDir)" -Version "$(Version)" -Properties Configuration=$(Configuration)</NugetCommand>
 
       </PropertyGroup>
       <Exec Command="$(NugetCommand)"/>
 
       <!-- Cleanup -->
-	  <Delete Files="$(OutputFileName)" />
+	  <!-- <Delete Files="$(OutputFileName)" /> -->
       <RemoveDir Directories="$(TmpOutDir)" />
     </Target>
   </Project>

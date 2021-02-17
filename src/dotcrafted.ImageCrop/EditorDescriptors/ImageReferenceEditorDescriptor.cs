@@ -8,7 +8,7 @@ namespace ITMeric.ImageCrop.EditorDescriptors
     {
         public ImageReferenceEditorDescriptor()
         {
-            ClientEditingClass = "itmeric/Scripts/Editors/ImageReferenceSelector";
+            ClientEditingClass = "dotcrafted/Scripts/Editors/ImageReferenceSelector";
         }
     }
 }

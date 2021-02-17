@@ -1,57 +1,51 @@
 .media-selector .media-list {
-    max-width: 660px;    
+    max-width: 660px;
 }
 
-.media-selector .media-list .media-item {
-    margin: 0 6px 10px 0;
-    padding: 0 2px;
-}
+    .media-selector .media-list .media-item {
+        margin: 0 6px 10px 0;
+        padding: 0 4px 0 0;
+    }
 
-.media-selector .media-list .media-item-inner {
-    border: 1px solid #929ba4;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-.media-selector .media-list .media-item.dojoDndItemBefore {
-    border-top: none;
-    padding-left: 0;
-}
-.media-selector .media-list .media-item.dojoDndItemAfter {
-    border-top: none;
-    padding-right: 0;
-}
+    .media-selector .media-list .media-item-inner {
+        border: 1px solid #DEDEDE;
+        border-bottom-right-radius: 2px;
+        border-bottom-left-radius: 2px;
+        background: #f8f9f9;
+    }
+
+    .media-selector .media-list .media-item.dojoDndItemBefore {
+        border-top: none;
+        padding-left: 0;
+    }
+
+    .media-selector .media-list .media-item.dojoDndItemAfter {
+        border-top: none;
+        padding-right: 0;
+    }
 
 
-.media-selector .media-list .media-item .media-buttons {
-    text-align: right;
-}
+    .media-selector .media-list .media-item .media-buttons {
+        text-align: right;
+    }
 
-.media-selector .media-list .media-item .media-buttons .epi-chromeless {
-    display: inline-block;
-}
+        .media-selector .media-list .media-item .media-buttons .epi-chromeless {
+            display: inline-block;
+        }
 
 /*.media-selector .drop-area { display: inline-block; }*/
 
-.media-selector .drop-area .dijitInputContainer {
-    display: table;
-    height: 100%;
-    width: 100%;
-    padding: 0;
+.media-selector .dijitTextBox {
+    width: 120px;
+    background: #f8f9f9;
 }
 
-.media-selector .drop-area .dijitInputContainer .dojoDndTarget,
-.media-selector .drop-area .dijitInputContainer .dojoDndTargetDisabled {
-    display: table-cell;
-    background-position: 50% 50%;
-}
-
-
-.media-selector .drop-area .dijitInputContainer .dojoDndItemAfter {
-    border-right: 2px solid #369;
-}
+    .media-selector .dijitTextBox .dijitInputContainer {
+        background: #f8f9f9;
+    }
 
 .media-selector .drop-area .drop-area-inner {
-    width: 120px;
+    width: 100px;
 }
 
 .media-loading {
@@ -66,6 +60,12 @@
     width: 520px;
 }
 
-.ImageReferenceSelectorDialog div {
-    max-height: 268px;
+    .ImageReferenceSelectorDialog div {
+        max-height: 268px;
+        width: auto;
+    }
+
+
+.media-selector .btnClear {
+    display: none;
 }

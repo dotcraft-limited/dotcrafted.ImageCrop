@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>dotcrafted.ImageCrop</id>
+    <version>$version$</version>
+    <title>dotctafted.ImageCrop</title>
+    <authors>dotcrafted</authors>
+    <owners>dotcrafted</owners>
+    <projectUrl>https://github.com/ITMeric/ITMeric.ImageCrop</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Image Cropper property editors for EPiServer site</description>
+    <copyright>Copyright (c) 2021 dotcrafted</copyright>
+    <tags>EPiServer CMS ImageCropper Cropper</tags>
+    <iconUrl>https://raw.githubusercontent.com/ITMeric/ITMeric.ImageCrop/master/icon.png</iconUrl>
+    <dependencies>
+      <dependency id="EPiServer.CMS.Core" version="[11.32.0, 12.0)" /> 
+      <dependency id="ImageResizer.Plugins.EPiServerBlobReader" version="[7.0.1, 8.0.0)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="dotcrafted.ImageCrop\bin\$configuration$\dotcrafted.ImageCrop.dll" target="lib\net45\" />	
+	<file src="dotcrafted.ImageCrop.zip" target="content\modules\_protected\dotcrafted.ImageCrop\" />
+	<file src="web.config.transform" target="content" />    
+  </files>
+</package>
