@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ITMeric.ImageCrop</RootNamespace>
-    <AssemblyName>dotcrafted.ImageCrop</AssemblyName>
+    <AssemblyName>ITMeric.ImageCrop</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -192,6 +192,7 @@
     <Compile Include="ExtensionMethods\ImageReferenceExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\AbstractJsonConverter.cs" />
+    <Compile Include="Serialization\CustomSerializationBinder.cs" />
     <Compile Include="Serialization\LowercaseContractResolver.cs" />
     <Compile Include="Serialization\MediaReferenceConverter.cs" />
   </ItemGroup>

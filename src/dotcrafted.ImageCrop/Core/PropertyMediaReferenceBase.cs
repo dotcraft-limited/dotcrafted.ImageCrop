@@ -16,8 +16,9 @@ namespace ITMeric.ImageCrop.Core
         protected readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All,
-            Converters = new List<JsonConverter> {new MediaConverter()},
+            Converters = new List<JsonConverter> { new MediaConverter() },
             ContractResolver = new LowercaseContractResolver(),
+            Binder = new CustomSerializationBinder(),
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
