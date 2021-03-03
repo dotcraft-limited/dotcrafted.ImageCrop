@@ -2,10 +2,14 @@
     max-width: 660px;
 }
 
-    .media-selector .media-list .media-item {
-        margin: 0 6px 10px 0;
-        padding: 0 4px 0 0;
-    }
+.media-selector.dijitError .drop-area-inner {
+    border-color: #d46464;
+}
+
+.media-selector .media-list .media-item {
+    margin: 0 6px 10px 0;
+    padding: 0 4px 0 0;
+}
 
     .media-selector .media-list .media-item-inner {
         border: 1px solid #DEDEDE;
