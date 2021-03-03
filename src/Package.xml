@@ -60,7 +60,7 @@
         <Version></Version>
       </PropertyGroup>
       
-      <GetVersion AssemblyPath="$(ProjectDir)\bin\$(Configuration)\dotcrafted.ImageCrop.dll">
+      <GetVersion AssemblyPath="$(ProjectDir)\bin\$(Configuration)\ITMeric.ImageCrop.dll">
         <Output TaskParameter="Version" PropertyName="Version" />
       </GetVersion>
     
